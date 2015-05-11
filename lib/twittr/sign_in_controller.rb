@@ -2,7 +2,7 @@ require './lib/twittr/application_controller'
 module Twittr
   class SignInController < Twittr::ApplicationController
     get '/' do
-      "hello!"
+      erb :index
     end
   end
 end
