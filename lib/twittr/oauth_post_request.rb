@@ -29,8 +29,7 @@ module Twittr
     def generate_signature
       joined_params = CGI.escape(oauth_params.sort.map { |values| "#{values[0]}=#{values[1]}" }.join("&"))
       string_base = "#{POST}&#{CGI.escape(url)}&#{joined_params}"
-      p string_base
-      key = "#{consumer_secret}&#{token_secret}"
+      key = "#{CGI.escape(consumer_secret)}&#{token_secret}"
       digest = OpenSSL::Digest.new('sha1')
       hmac = OpenSSL::HMAC.digest(digest, key, string_base)
       oauth_params["oauth_signature"] = CGI.escape(Base64.encode64(hmac).strip)

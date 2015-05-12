@@ -11,7 +11,6 @@ module Twittr
     end
 
     def make_call
-      p "Authorization header: " + http_method['Authorization']
       res = http_caller.request(http_method)
       @params_hash = split_params(res.body)
     end
@@ -28,6 +27,9 @@ module Twittr
       http_caller.use_ssl = boolean
     end
 
+    def body=(params)
+      http_method.body = params
+    end
     private
 
     attr_reader :params, :http_caller, :http_method 
