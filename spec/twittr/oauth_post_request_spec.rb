@@ -43,14 +43,6 @@ describe Twittr::OAuthPostRequest do
       post_request.add_oauth_param("callback", "thisIsCallbackRoute")
       expect(post_request.contains_auth_param?("callback")).to be true
     end
-
-    it "params are percent encoded" do
-      post_request = create_request
-      route = "this Is Callback&Route"
-      post_request.add_oauth_param("callback", route)
-
-      expect(post_request.get_param("callback")).to eq(CGI.escape(route))
-    end
   end
 
   context "#url_to_uri" do

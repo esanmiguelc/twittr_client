@@ -13,7 +13,7 @@ describe Twittr::SignInController do
 
     it "has a form to sign in" do
       get_index
-      expect(last_response.body).to include("form")
+      expect(last_response.body).to include "form" 
     end
 
     def get_index
@@ -22,7 +22,7 @@ describe Twittr::SignInController do
   end
 
   context '/twitter_login' do
-    it "redirects after code is done" do
+    it "redirects after api call is done" do
       post "/twitter_login"
       expect(last_response).to be_redirect
       expect(last_response.location).to include 'https://api.twitter.com/oauth/authenticate?oauth_token='

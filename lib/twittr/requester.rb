@@ -11,8 +11,8 @@ module Twittr
     end
 
     def make_call
-      http_caller.request(http_method)
-      @params_hash = split_params(http_caller.body)
+      res = http_caller.request(http_method)
+      @params_hash = split_params(res.body)
     end
 
     def get_param(key)
@@ -27,6 +27,9 @@ module Twittr
       http_caller.use_ssl = boolean
     end
 
+    def body=(params)
+      http_method.body = params
+    end
     private
 
     attr_reader :params, :http_caller, :http_method 

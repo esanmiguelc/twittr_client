@@ -26,6 +26,14 @@ describe Twittr::Requester do
     end
   end
 
+  context "#body" do
+    it "sets the request body" do
+      requester = Twittr::Requester.new(requester_mock, spy_post_request)
+      requester.body = "some=param"
+      expect(spy_post_request).to have_received(:body=)
+    end
+  end
+
   context "#use_ssl" do
     it "sets to verify_mode" do
       requester = Twittr::Requester.new(requester_mock, spy_post_request)
