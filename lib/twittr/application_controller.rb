@@ -1,4 +1,5 @@
 require 'sinatra/base'
+
 module Twittr
   class ApplicationController < Sinatra::Base
 

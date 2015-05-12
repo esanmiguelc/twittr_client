@@ -11,8 +11,9 @@ module Twittr
     end
 
     def make_call
-      http_caller.request(http_method)
-      @params_hash = split_params(http_caller.body)
+      p "Authorization header: " + http_method['Authorization']
+      res = http_caller.request(http_method)
+      @params_hash = split_params(res.body)
     end
 
     def get_param(key)

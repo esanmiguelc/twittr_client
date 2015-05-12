@@ -19,7 +19,7 @@ module Twittr
     end
 
     def add_oauth_param(key, value)
-      oauth_params[key] = CGI.escape(value)
+      oauth_params[key] = value
     end
 
     def contains_auth_param?(key)
@@ -27,11 +27,13 @@ module Twittr
     end
 
     def generate_signature
-      joined_params = oauth_params.sort.map { |values| "#{values[0]}=#{values[1]}" }.join("&")
-      string_base = "#{POST}&#{CGI.escape(url)}&#{CGI.escape(joined_params)}"
+      joined_params = CGI.escape(oauth_params.sort.map { |values| "#{values[0]}=#{values[1]}" }.join("&"))
+      string_base = "#{POST}&#{CGI.escape(url)}&#{joined_params}"
+      p string_base
       key = "#{consumer_secret}&#{token_secret}"
       digest = OpenSSL::Digest.new('sha1')
-      oauth_params["oauth_signature"] = CGI.escape(Base64.encode64(OpenSSL::HMAC.digest(digest, key, string_base)).strip)
+      hmac = OpenSSL::HMAC.digest(digest, key, string_base)
+      oauth_params["oauth_signature"] = CGI.escape(Base64.encode64(hmac).strip)
     end
     
     def get_param(key)
@@ -54,5 +56,6 @@ module Twittr
     private
     
     attr_reader :consumer_secret, :token_secret
+
   end
 end
