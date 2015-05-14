@@ -22,7 +22,6 @@ describe Twittr::OAuthSignature do
       }
 
       post_request = create_request(url, consumer_secret, params)
-
       post_request.generate_signature
 
       expect(post_request.get_param("oauth_signature")).to eq(make_signature(url, params, consumer_secret))
@@ -77,6 +76,6 @@ describe Twittr::OAuthSignature do
 
   def create_request(url = "www.example.com", consumer_secret = nil, params = {})
     clone_params = params.dup
-    Twittr::OAuthSignature.new(url, {consumer_secret: consumer_secret, oauth_params: clone_params})
+    Twittr::OAuthSignature.new({url: url, consumer_secret: consumer_secret, oauth_params: clone_params})
   end
 end

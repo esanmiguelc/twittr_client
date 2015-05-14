@@ -8,10 +8,10 @@ module Twittr
 
     POST = "POST"
 
-    attr_reader :url, :post_request 
+    attr_reader :url, :post_request
 
-    def initialize(url, options = {})
-      @url = url
+    def initialize(options = {})
+      @url = options[:url]
       @consumer_secret = options[:consumer_secret] || ""
       @token_secret = options[:token_secret] || ""
       @oauth_params = options[:oauth_params] || {}
@@ -40,6 +40,10 @@ module Twittr
     end
 
     def oauth_params
+      @oauth_params
+    end
+
+    def oauth_headers
       @oauth_params
     end
 

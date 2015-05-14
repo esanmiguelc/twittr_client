@@ -75,9 +75,49 @@ describe Twittr::SignInController do
       post "/twitter_login"
       expect(session['secret']).to eq("user_secret")
     end
+  end
 
+  context "/twitter_callback" do
+    let (:request_spy) { spy('requester') }
+    let (:url) { 'some-url' }
+    let (:oauth_signature) { "oauth_signature" }
+
+    it "builds a signature" do
+      allow(Twittr::OAuthSignature).to receive(:new)
+      get '/twitter_callback'
+
+      expect(Twittr::OAuthSignature).to have_received(:new)
+    end
+
+    it "makes a request with the signature" do
+      allow(Twittr::OAuthSignature).to receive(:new).and_return(oauth_signature)
+      expect(Twittr::Requester).to receive(:new).with(oauth_signature).and_return(request_spy)
+      expect(request_spy).to receive(:make_call)
+
+      get "/twitter_callback"
+    end
+
+    it "redirects to the feed" do
+      allow(Twittr::OAuthSignature).to receive(:new).and_return(oauth_signature)
+      expect(Twittr::Requester).to receive(:new).with(oauth_signature).and_return(request_spy)
+
+      get "/twitter_callback"
+
+      expect(last_response.redirect?).to eq(true)
+      expect(last_response.location).to eq("http://example.org/feed")
+    end
+
+    it "sets the screen name to session" do
+      allow(Twittr::OAuthSignature).to receive(:new).and_return(oauth_signature)
+      expect(Twittr::Requester).to receive(:new).with(oauth_signature).and_return(request_spy)
+      allow(request_spy).to receive(:get_param).with("screen_name").and_return("esanmiguelc")
+
+      get "/twitter_callback"
+
+      expect(session['screen_name']).to eq("esanmiguelc")
+    end
+  end
     def session
       last_request.env['rack.session']
     end
-  end
 end

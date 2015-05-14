@@ -1,59 +1,82 @@
 require 'spec_helper'
+
 describe Twittr::Requester do
   let(:spy_post_request) { spy("SpyHTTPMethod") }
   let(:requester_mock) { double("MockHTTP", :body => "oauth_verifier=123&oauth_else=something").as_null_object }
+  let(:uri) { double("URI", :host => "example.org", :port => "5000" ) }
+  let(:oauth_signature) { 
+    double("OAuthSignature", :oauth_headers => 
+           {
+             "oauth_consumer" => "key",
+             "oauth_token" => "token"
+           }, 
+           :url => "example.org",
+           :url_to_uri => uri)
+  }
+
 
   context "calling the api" do
-    it "makes a call to the API" do
-      requester_spy = spy("SpyHTTP")
+    let(:post_object) { spy("http_post") }
+    let(:http_caller) { spy("http_caller") }
 
-      requester = Twittr::Requester.new(requester_mock, spy_post_request)
+    it "makes a call to the API" do
+      allow(Net::HTTP::Post).to receive(:new).with("example.org").and_return(post_object)
+      allow(post_object).to receive(:add_field)
+      allow(Net::HTTP).to receive(:new).and_return(http_caller)
+      requester = create_requester
       requester.make_call
 
-      expect(requester_mock).to have_received(:request).with(spy_post_request)
-    end
-  end
-
-  context "SSL mode" do
-    it "sets to verify_mode" do
-      requester = Twittr::Requester.new(requester_mock, spy_post_request)
-      expect(requester).to respond_to(:verify_mode=)
+      expect(http_caller).to have_received(:request).with(post_object)
     end
 
-    it "delegates to Http requester" do
-      requester = Twittr::Requester.new(requester_mock, spy_post_request)
-      requester.verify_mode = OpenSSL::SSL::VERIFY_NONE
-      expect(requester_mock).to have_received(:verify_mode=)
+    it "adds the string headers to the method caller" do
+      allow(Net::HTTP::Post).to receive(:new).with("example.org").and_return(post_object)
+      allow(post_object).to receive(:add_field)
+      allow(Net::HTTP).to receive(:new).with("example.org", "5000").and_return(http_caller)
+      requester = create_requester
+      requester.make_call
+
+      expect(post_object).to have_received(:add_field).with("Authorization", "oauth_consumer=key, oauth_token=token")
+    end
+
+    it "has no response params" do
+      requester = create_requester
+      expect(requester.response_params).to be_empty
+    end
+
+    it "has params after making the call" do
+      ok_response = double("OkResponse", :body => "one=two")
+      allow(Net::HTTP::Post).to receive(:new).with("example.org").and_return(post_object)
+      allow(post_object).to receive(:add_field)
+      allow(Net::HTTP).to receive(:new).with("example.org", "5000").and_return(http_caller)
+      allow(http_caller).to receive(:request).and_return(ok_response)
+      requester = create_requester
+      requester.make_call
+      expect(requester.response_params).to_not be_empty
     end
   end
 
   context "body of a request" do
+    let(:post_object) { spy("http_post") }
+    let(:http_caller) { spy("http_caller") }
     it "sets the request body" do
-      requester = Twittr::Requester.new(requester_mock, spy_post_request)
+      allow(Net::HTTP::Post).to receive(:new).with("example.org").and_return(post_object)
+      requester = create_requester
       requester.body = "some=param"
-      expect(spy_post_request).to have_received(:body=)
+      expect(post_object).to have_received(:body=)
     end
   end
 
-  context "using ssl" do
-    it "responds to use_ssl" do
-      requester = Twittr::Requester.new(requester_mock, spy_post_request)
-      expect(requester).to respond_to(:use_ssl=)
+  context "adding the header for the request" do
+    let(:post_object) { spy("http_post") }
+    it "builds the auth header as string" do
+      requester = Twittr::Requester.new(oauth_signature: oauth_signature)
+
+      expect(requester.string_auth_values).to eq("oauth_consumer=key, oauth_token=token")
     end
 
-    it "delegates to Http requester" do
-      requester = Twittr::Requester.new(requester_mock, spy_post_request)
-      requester.use_ssl = true
-      expect(requester_mock).to have_received(:use_ssl=)
-    end
   end
-
-  context "getting request parameters" do
-    it "makes a request and shows params" do
-      requester = Twittr::Requester.new(requester_mock, spy_post_request)
-      requester.make_call
-
-      expect(requester.get_param("oauth_verifier")).to eq("123")
+    def create_requester
+      Twittr::Requester.new(oauth_signature: oauth_signature, http_caller: requester_mock, http_method: spy_post_request)
     end
-  end
 end
