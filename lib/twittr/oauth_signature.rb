@@ -4,7 +4,7 @@ require 'net/http'
 require 'uri' 
 
 module Twittr
-  class OAuthPostRequest
+  class OAuthSignature
 
     POST = "POST"
 

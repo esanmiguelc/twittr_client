@@ -2,9 +2,9 @@ require 'spec_helper'
 require 'cgi'
 require 'base64'
 
-describe Twittr::OAuthPostRequest do
+describe Twittr::OAuthSignature do
 
-  context "url" do
+  context "#url" do
     it "has a url to make the request" do
       url = "http://www.example.com"
       post_request = create_request(url)
@@ -12,8 +12,8 @@ describe Twittr::OAuthPostRequest do
     end
   end
 
-  context "generate_signature" do
-    it "generates the correct hashing signature" do
+  context "generates a signature for authentication" do
+    it "creates the correct hashing signature" do
       url = "www.example.com"
       consumer_secret = "123"
       params = {
@@ -37,7 +37,7 @@ describe Twittr::OAuthPostRequest do
     end
   end
 
-  context "auth_params" do
+  context "authentication header params" do
     it "sets an auth param" do
       post_request = create_request
       post_request.add_oauth_param("callback", "thisIsCallbackRoute")
@@ -45,7 +45,7 @@ describe Twittr::OAuthPostRequest do
     end
   end
 
-  context "#url_to_uri" do
+  context "converts a url to a valid URI" do
     it "returns a uri" do
       post_request = create_request
 
@@ -53,8 +53,8 @@ describe Twittr::OAuthPostRequest do
     end
   end
 
-  context "#build_auth_header" do
-    it "returns the field" do
+  context "building the authentication header" do
+    it "returns the header value" do
       params = {
         "oauth_consumer_key" => "someKey",
         "oauth_nonce" => "123"
@@ -77,6 +77,6 @@ describe Twittr::OAuthPostRequest do
 
   def create_request(url = "www.example.com", consumer_secret = nil, params = {})
     clone_params = params.dup
-    Twittr::OAuthPostRequest.new(url, {consumer_secret: consumer_secret, oauth_params: clone_params})
+    Twittr::OAuthSignature.new(url, {consumer_secret: consumer_secret, oauth_params: clone_params})
   end
 end
