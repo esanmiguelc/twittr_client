@@ -37,9 +37,5 @@ module Twittr
       session['screen_name'] = requester.get_response_param('screen_name')
       redirect to "/feed"
     end
-
-    get "/feed" do
-      "Username: " + session['screen_name']
-    end
   end
 end

@@ -12,7 +12,8 @@ describe Twittr::Requester do
            }, 
            :end_point => "example.org",
            :end_point_to_uri => uri,
-           :generate_signature => "")
+           :generate_signature => "",
+           :http_method => "POST")
   }
 
   context "calling the api" do
@@ -65,11 +66,20 @@ describe Twittr::Requester do
   context "body of a request" do
     let(:post_object) { spy("http_post") }
     let(:http_caller) { spy("http_caller") }
+
     it "sets the request body" do
       allow(Net::HTTP::Post).to receive(:new).with("example.org").and_return(post_object)
       requester = create_requester
       requester.body = "some=param"
       expect(post_object).to have_received(:body=)
+    end
+  end
+
+  context "building the request object" do
+    it "builds the object for get requests" do
+      allow(oauth_signature).to receive(:http_method).and_return("GET")
+      requester = create_requester
+      expect(requester.request).to be_kind_of(Net::HTTP::Get)
     end
   end
 

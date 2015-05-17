@@ -1,10 +1,12 @@
 require 'spec_helper'
 
-def app
-  Twittr::SignInController
-end
 
 describe Twittr::SignInController do
+
+  def app
+    Twittr::SignInController
+  end
+
   context "/" do
     it "gets the index" do
       get_index
@@ -28,13 +30,14 @@ describe Twittr::SignInController do
     let (:oauth_signature) { "oauth_signature" }
 
     before(:each) do
-      allow(Twittr::OAuthSignature).to receive(:new).with(callback, end_point).and_return(oauth_signature)
+      allow(Twittr::OAuthSignature).to receive(:new).with(callback: "http://#{callback}/twitter_callback", end_point: end_point).and_return(oauth_signature)
     end
 
     it "builds a Twitter Oauth signature" do
+      allow(Twittr::Requester).to receive(:new).with(oauth_signature).and_return(request_spy)
       post "/twitter_login", {}, {"HTTP_HOST" => callback}
 
-      expect(Twittr::OAuthSignature).to have_received(:new).with({callback: "http://#{callback}/twitter_callback", end_point: end_point})
+      expect(Twittr::OAuthSignature).to have_received(:new).with(callback: "http://#{callback}/twitter_callback", end_point: end_point)
     end
 
     it "make a request with OAuth signature" do
@@ -62,6 +65,7 @@ describe Twittr::SignInController do
       allow(Twittr::OAuthSignature).to receive(:new).and_return(oauth_signature)
       expect(Twittr::Requester).to receive(:new).with(oauth_signature).and_return(request_spy)
       allow(request_spy).to receive(:get_response_param).with("oauth_token").and_return("user_token")
+      allow(request_spy).to receive(:get_response_param).with("oauth_token_secret").and_return("user_secret")
 
       post "/twitter_login"
 
@@ -86,10 +90,14 @@ describe Twittr::SignInController do
     let (:oauth_signature) { "oauth_signature" }
 
     it "builds a signature" do
-      allow(Twittr::OAuthSignature).to receive(:new)
-      get '/twitter_callback'
+      end_point = "https://api.twitter.com/oauth/access_token"
+      allow(Twittr::OAuthSignature).to receive(:new).with(end_point: end_point, token: "456").and_return(oauth_signature)
+      allow(Twittr::Requester).to receive(:new).with(oauth_signature).and_return(request_spy)
+      get "/twitter_callback", {}, {'rack.session' => { "screen_name" => "esanmiguelc",
+                                        "token" => "456",
+                                        "secret" => "123"} }
 
-      expect(Twittr::OAuthSignature).to have_received(:new)
+      expect(Twittr::OAuthSignature).to have_received(:new).with(end_point: end_point, token: "456")
     end
 
     it "makes a request with the signature" do

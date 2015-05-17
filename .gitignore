@@ -1,5 +1,7 @@
 *.swp
 *.swo
+.DS_Store
 
-*application_controller.rb
+/node_modules
+
 

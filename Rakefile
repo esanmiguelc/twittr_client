@@ -5,3 +5,5 @@ begin
 rescue LoadError
   "no specfile found"
 end
+require 'jasmine'
+load 'jasmine/tasks/jasmine.rake'

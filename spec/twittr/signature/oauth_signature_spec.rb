@@ -4,11 +4,25 @@ require 'base64'
 
 describe Twittr::OAuthSignature do
 
-  context "#end_point" do
+  context "route to api" do
     it "has a end_point to make the request" do
       end_point = "http://www.example.com"
       post_request = create_request(end_point)
       expect(post_request).to have_attributes(:end_point => end_point)
+    end
+  end
+
+  context "specifying http method" do
+    it "passing the correct method for the requested resource" do
+      get = "GET"
+      end_point = "http://www.example.com"
+      post_request = create_request(end_point, get)
+      expect(post_request.http_method).to eq(get)
+    end
+
+    it "defaults to post when nothing gets passed in" do
+      post_request = Twittr::OAuthSignature.new
+      expect(post_request.http_method).to eq("POST")
     end
   end
 
@@ -137,8 +151,8 @@ describe Twittr::OAuthSignature do
     expect(post_request).to respond_to(:oauth_headers)
   end
 
-  def create_request(end_point = "www.example.com", consumer_secret = nil, params = {})
+  def create_request(end_point = "www.example.com", http_method = "POST", params = {})
     clone_params = params.dup
-    Twittr::OAuthSignature.new({end_point: end_point})
+    Twittr::OAuthSignature.new({end_point: end_point, http_method: http_method})
   end
 end

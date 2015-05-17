@@ -12,7 +12,6 @@ module Twittr
       oauth_signature.generate_signature
       request.add_field("Authorization", string_auth_values)
       http_caller.request(request).tap do |response|
-        p response.body
         @response_params = split_response_params(response.body)
       end
     end
@@ -29,7 +28,11 @@ module Twittr
     end
 
     def request
-      @request ||= Net::HTTP::Post.new(oauth_signature.end_point)
+      if (oauth_signature.http_method == "GET")
+        @request ||= Net::HTTP::Get.new(oauth_signature.end_point)
+      else
+        @request ||= Net::HTTP::Post.new(oauth_signature.end_point)
+      end
     end
 
     def string_auth_values
