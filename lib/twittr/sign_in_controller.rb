@@ -39,14 +39,7 @@ module Twittr
     end
 
     get "/feed" do
-      oauth_signature = Twittr::OAuthSignature.new(
-        method: "GET",
-        end_point: "https://api.twitter.com/1.1/statuses/home_timeline.json",
-        secret: session['secret'],
-        token: session['token'])
-      requester = Twittr::Requester.new(oauth_signature)
-      requester.make_call
-      requester.body
+      "Username: " + session['screen_name']
     end
   end
 end
