@@ -12,7 +12,10 @@ module Twittr
     end
 
     post '/twitter_login' do
-       oauth_signature = Twittr::OAuthSignature.new(request.host_with_port)
+      oauth_signature = Twittr::OAuthSignature.new(
+        callback: "http://#{request.host_with_port}/twitter_callback", 
+        end_point: "https://api.twitter.com/oauth/request_token"
+      )
        requester = Twittr::Requester.new(oauth_signature)
        requester.make_call
        session['token'] = requester.get_param("oauth_token")

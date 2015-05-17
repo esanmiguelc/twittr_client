@@ -10,10 +10,10 @@ describe Twittr::Requester do
              "oauth_consumer" => "key",
              "oauth_token" => "token"
            }, 
-           :url => "example.org",
-           :url_to_uri => uri)
+           :end_point => "example.org",
+           :end_point_to_uri => uri,
+           :generate_signature => "")
   }
-
 
   context "calling the api" do
     let(:post_object) { spy("http_post") }
@@ -26,7 +26,7 @@ describe Twittr::Requester do
       requester = create_requester
       requester.make_call
 
-      expect(http_caller).to have_received(:request).with(post_object)
+      expect(oauth_signature).to have_received(:generate_signature)
     end
 
     it "adds the string headers to the method caller" do
@@ -36,12 +36,7 @@ describe Twittr::Requester do
       requester = create_requester
       requester.make_call
 
-      expect(post_object).to have_received(:add_field).with("Authorization", "oauth_consumer=key, oauth_token=token")
-    end
-
-    it "has no response params" do
-      requester = create_requester
-      expect(requester.response_params).to be_empty
+      expect(post_object).to have_received(:add_field).with("Authorization", "OAuth oauth_consumer=key, oauth_token=token")
     end
 
     it "has params after making the call" do
@@ -70,13 +65,13 @@ describe Twittr::Requester do
   context "adding the header for the request" do
     let(:post_object) { spy("http_post") }
     it "builds the auth header as string" do
-      requester = Twittr::Requester.new(oauth_signature: oauth_signature)
+      requester = Twittr::Requester.new(oauth_signature)
 
-      expect(requester.string_auth_values).to eq("oauth_consumer=key, oauth_token=token")
+      expect(requester.string_auth_values).to eq("OAuth oauth_consumer=key, oauth_token=token")
     end
 
   end
     def create_requester
-      Twittr::Requester.new(oauth_signature: oauth_signature, http_caller: requester_mock, http_method: spy_post_request)
+      Twittr::Requester.new(oauth_signature)
     end
 end

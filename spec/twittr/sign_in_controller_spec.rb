@@ -23,17 +23,18 @@ describe Twittr::SignInController do
 
   context '/twitter_login' do
     let (:request_spy) { spy('requester') }
-    let (:url) { 'some-url' }
+    let (:callback) { 'some-url' }
+    let (:end_point) { 'https://api.twitter.com/oauth/request_token' }
     let (:oauth_signature) { "oauth_signature" }
 
     before(:each) do
-      allow(Twittr::OAuthSignature).to receive(:new).with(url).and_return(oauth_signature)
+      allow(Twittr::OAuthSignature).to receive(:new).with(callback, end_point).and_return(oauth_signature)
     end
 
     it "builds a Twitter Oauth signature" do
-      post "/twitter_login", {}, {"HTTP_HOST" => url}
+      post "/twitter_login", {}, {"HTTP_HOST" => callback}
 
-      expect(Twittr::OAuthSignature).to have_received(:new).with(url)
+      expect(Twittr::OAuthSignature).to have_received(:new).with({callback: "http://#{callback}/twitter_callback", end_point: end_point})
     end
 
     it "make a request with OAuth signature" do
@@ -79,7 +80,7 @@ describe Twittr::SignInController do
 
   context "/twitter_callback" do
     let (:request_spy) { spy('requester') }
-    let (:url) { 'some-url' }
+    let (:callback) { 'some-url' }
     let (:oauth_signature) { "oauth_signature" }
 
     it "builds a signature" do
