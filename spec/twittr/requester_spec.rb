@@ -49,6 +49,17 @@ describe Twittr::Requester do
       requester.make_call
       expect(requester.response_params).to_not be_empty
     end
+
+    it "gets the key for a param" do
+      ok_response = double("OkResponse", :body => "oauth_token=123")
+      allow(Net::HTTP::Post).to receive(:new).with("example.org").and_return(post_object)
+      allow(post_object).to receive(:add_field)
+      allow(Net::HTTP).to receive(:new).with("example.org", "5000").and_return(http_caller)
+      allow(http_caller).to receive(:request).and_return(ok_response)
+      requester = create_requester
+      requester.make_call
+      expect(requester.get_response_param("oauth_token")).to eq("123")
+    end
   end
 
   context "body of a request" do

@@ -86,6 +86,11 @@ describe Twittr::OAuthSignature do
 
     end
 
+    it "has oauth_token if it is passed in" do
+      signature = Twittr::OAuthSignature.new(token: "123", end_point: "example.org")
+      expect(signature.get_param("oauth_token")).to eq("123")
+    end
+
     it "has a callback if it gets a callback passed in" do
       signature = Twittr::OAuthSignature.new(callback: "myaddress.com", end_point: "example.org")
       expect(signature.get_param("oauth_callback")).to eq("myaddress.com")

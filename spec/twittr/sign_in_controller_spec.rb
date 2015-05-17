@@ -49,8 +49,8 @@ describe Twittr::SignInController do
     it "redirects with oauth token" do
       allow(Twittr::OAuthSignature).to receive(:new).and_return(oauth_signature)
       expect(Twittr::Requester).to receive(:new).with(oauth_signature).and_return(request_spy)
-      allow(request_spy).to receive(:get_param).with("oauth_token").and_return("user_token")
-      allow(request_spy).to receive(:get_param).with("oauth_token_secret").and_return("user_secret")
+      allow(request_spy).to receive(:get_response_param).with("oauth_token").and_return("user_token")
+      allow(request_spy).to receive(:get_response_param).with("oauth_token_secret").and_return("user_secret")
 
       post "/twitter_login"
 
@@ -61,7 +61,8 @@ describe Twittr::SignInController do
     it "token is stored in session" do
       allow(Twittr::OAuthSignature).to receive(:new).and_return(oauth_signature)
       expect(Twittr::Requester).to receive(:new).with(oauth_signature).and_return(request_spy)
-      allow(request_spy).to receive(:get_param).with("oauth_token").and_return("user_token")
+      allow(request_spy).to receive(:get_response_param).with("oauth_token").and_return("user_token")
+
       post "/twitter_login"
 
       expect(session['token']).to eq("user_token")
@@ -70,10 +71,11 @@ describe Twittr::SignInController do
     it "secret is stored in session" do
       allow(Twittr::OAuthSignature).to receive(:new).and_return(oauth_signature)
       expect(Twittr::Requester).to receive(:new).with(oauth_signature).and_return(request_spy)
-      allow(request_spy).to receive(:get_param).with("oauth_token").and_return("user_token")
-      allow(request_spy).to receive(:get_param).with("oauth_token_secret").and_return("user_secret")
+      allow(request_spy).to receive(:get_response_param).with("oauth_token").and_return("user_token")
+      allow(request_spy).to receive(:get_response_param).with("oauth_token_secret").and_return("user_secret")
       
       post "/twitter_login"
+
       expect(session['secret']).to eq("user_secret")
     end
   end
@@ -108,17 +110,43 @@ describe Twittr::SignInController do
       expect(last_response.location).to eq("http://example.org/feed")
     end
 
-    it "sets the screen name to session" do
-      allow(Twittr::OAuthSignature).to receive(:new).and_return(oauth_signature)
-      expect(Twittr::Requester).to receive(:new).with(oauth_signature).and_return(request_spy)
-      allow(request_spy).to receive(:get_param).with("screen_name").and_return("esanmiguelc")
+    context "saving the session variables" do
+      before(:each) do
+        allow(request_spy).to receive(:get_response_param).with("oauth_token").and_return("123")
+        allow(request_spy).to receive(:get_response_param).with("oauth_token_secret").and_return("456")
+        allow(request_spy).to receive(:get_response_param).with("screen_name").and_return("esanmiguelc")
+      end
 
-      get "/twitter_callback"
+      it "sets the screen name to session" do
+        allow(Twittr::OAuthSignature).to receive(:new).and_return(oauth_signature)
+        expect(Twittr::Requester).to receive(:new).with(oauth_signature).and_return(request_spy)
 
-      expect(session['screen_name']).to eq("esanmiguelc")
+        get "/twitter_callback"
+
+        expect(session['screen_name']).to eq("esanmiguelc")
+      end
+
+      it "sets the token secret to session" do
+        allow(Twittr::OAuthSignature).to receive(:new).and_return(oauth_signature)
+        expect(Twittr::Requester).to receive(:new).with(oauth_signature).and_return(request_spy)
+
+        get "/twitter_callback"
+
+        expect(session['secret']).to eq("456")
+      end
+
+      it "sets the token to session" do
+        allow(Twittr::OAuthSignature).to receive(:new).and_return(oauth_signature)
+        expect(Twittr::Requester).to receive(:new).with(oauth_signature).and_return(request_spy)
+
+        get "/twitter_callback"
+
+        expect(session['token']).to eq("123")
+      end
     end
   end
-    def session
-      last_request.env['rack.session']
-    end
+
+  def session
+    last_request.env['rack.session']
+  end
 end

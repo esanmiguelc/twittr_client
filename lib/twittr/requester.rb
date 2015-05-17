@@ -12,6 +12,7 @@ module Twittr
       oauth_signature.generate_signature
       request.add_field("Authorization", string_auth_values)
       http_caller.request(request).tap do |response|
+        p response.body
         @response_params = split_response_params(response.body)
       end
     end
@@ -31,12 +32,12 @@ module Twittr
       @request ||= Net::HTTP::Post.new(oauth_signature.end_point)
     end
 
-    def get_param(key)
-      params_hash[key]
+    def string_auth_values
+      "OAuth " << oauth_signature.oauth_headers.map { |k,v| "#{k}=#{v}" }.join(", ")
     end
 
-    def string_auth_values
-      "OAuth " << oauth_signature.oauth_headers.map { |k,v| "#{k}=#{CGI.escape(v)}" }.join(", ")
+    def get_response_param(param)
+      response_params[param]
     end
 
     def body=(params)
@@ -48,7 +49,6 @@ module Twittr
     attr_reader :oauth_signature
 
     def split_response_params(params)
-      p params
       params.split("&").map { |param| param.split("=") }.to_h
     end
   end
