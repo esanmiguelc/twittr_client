@@ -1,0 +1,24 @@
+{
+  "name": "twittr",
+  "version": "1.0.0",
+  "description": "Front-End dependencies",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/esanmiguelc/twittr_client.git"
+  },
+  "author": "Emmanuel San Miguel",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/esanmiguelc/twittr_client/issues"
+  },
+  "homepage": "https://github.com/esanmiguelc/twittr_client#readme",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-coffee": "^0.13.0",
+    "grunt-contrib-watch": "^0.6.1"
+  }
+}
