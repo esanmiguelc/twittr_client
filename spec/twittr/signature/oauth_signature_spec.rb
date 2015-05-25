@@ -26,11 +26,11 @@ describe Twittr::OAuthSignature do
     end
   end
 
-  xcontext "generates a signature for authentication" do
+  context "generates a signature for authentication" do
     it "generates the correct string base" do
       end_point = "https://api.twitter.com/1/statuses/update.json"
       request_params = {
-        "status" => "Hello%20Ladies%20%2b%20Gentlemen%2c%20a%20signed%20OAuth%20request%21",
+        "status" => "Hello%20Ladies%20%2B%20Gentlemen%2C%20a%20signed%20OAuth%20request%21",
         "include_entities" => "true"
       }
       params = {
