@@ -12,7 +12,6 @@ module Twittr
     attr_reader :end_point
 
     def initialize(options = {})
-      
       @end_point = options[:end_point]
       @http_method = options[:http_method] || POST
       @token_secret = options[:secret] || ""
