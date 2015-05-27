@@ -26,11 +26,11 @@ describe Twittr::OAuthSignature do
     end
   end
 
-  xcontext "generates a signature for authentication" do
+  context "generates a signature for authentication" do
     it "generates the correct string base" do
       end_point = "https://api.twitter.com/1/statuses/update.json"
       request_params = {
-        "status" => "Hello%20Ladies%20%2b%20Gentlemen%2c%20a%20signed%20OAuth%20request%21",
+        "status" => "Hello%20Ladies%20%2B%20Gentlemen%2C%20a%20signed%20OAuth%20request%21",
         "include_entities" => "true"
       }
       params = {
@@ -60,35 +60,29 @@ describe Twittr::OAuthSignature do
     end
 
     it "creates the correct hashing signature" do
-      end_point = "https://api.twitter.com/1/update.json"
+      end_point = "https://api.twitter.com/1.1/users/show.json"
       request_params = {
-        "status" => "Hello Ladies + Gentlemen, a signed OAuth request!",
-        "include_entities" => "true"
+        "screen_name" => "esanmiguelc",
       }
+
       params = {
-        "oauth_consumer_key" => "xvz1evFS4wEEPTGEFPHBog",
-        "oauth_nonce" => "kYjzVBB8Y0ZFabxSWbWovY3uYSQ2pTgmZeNu2VS4cg",
+        "oauth_consumer_key" => "9B8p9gxtml1eiykSHZO23HZRT",
+        "oauth_nonce" => "c3362dde551338197a5391f1c770850d",
         "oauth_signature_method" => "HMAC-SHA1",
-        "oauth_timestamp" => "1318622958",
-        "oauth_token" => "370773112-GmHxMAgYyLbNEtIKZeRNFsMKPR9EyMZeS9weJAEb",
+        "oauth_timestamp" => "1432757552",
+        "oauth_token" => "84837295-hj0S2ocAK7OaFY9MrRihrRYAidXRzXoWq2uAr6Giv",
         "oauth_version" => "1.0"
       }
 
       post_request = create_request(end_point)
-      allow(post_request).to receive(:consumer_secret).and_return("kAcSOqF21Fu85e7zjz7ZN2U4ZRhfV3WpwPAoE3Z7kBw")
-      allow(post_request).to receive(:token_secret).and_return("LswwdoUaIvS8ltyTt5jkRh4J50vUPVVHtR2YPi5kE")
+      allow(post_request).to receive(:http_method).and_return("GET")
+      allow(post_request).to receive(:consumer_secret).and_return("4y36UYbf2B6rhyrQljXPp8bNKFcoYD6pkddjTJY9LcTueKcohz")
+      allow(post_request).to receive(:token_secret).and_return("AD0TXJDLvtahE9kCqmO5TEp50AQBcN7sHfuNHdO2eyZGY")
       allow(post_request).to receive(:oauth_headers).and_return(params)
       allow(post_request).to receive(:request_params).and_return(request_params)
       post_request.generate_signature
 
-      expect(post_request.get_param("oauth_signature")).to eq(CGI.escape("tnnArxj06cWHq44gCs1OSKk/jLY="))
-    end
-
-    def make_signature(end_point, params, cons_secret) joined_params = CGI.escape(params.sort.map { |values| "#{values[0]}=#{values[1]}" }.join("&"))
-      string_base = "POST&#{CGI.escape(end_point)}&#{joined_params}"
-      key = "#{cons_secret}&"
-      digest = OpenSSL::Digest.new('sha1')
-      CGI.escape(Base64.encode64(OpenSSL::HMAC.digest(digest, key, string_base)).strip)
+      expect(post_request.get_param("oauth_signature")).to eq("MSkCwMFF0QLCIQqaTuCj47KjyYg%3D")
     end
   end
 

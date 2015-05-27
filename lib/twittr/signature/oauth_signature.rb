@@ -1,4 +1,3 @@
-require 'cgi'
 require 'base64'
 require 'net/http'
 require 'uri' 
@@ -13,10 +12,10 @@ module Twittr
     attr_reader :end_point
 
     def initialize(options = {})
-      
       @end_point = options[:end_point]
       @http_method = options[:http_method] || POST
       @token_secret = options[:secret] || ""
+      @request_params = options[:request_params] || {}
       oauth_headers["oauth_callback"] = options[:callback] unless options[:callback].nil?
       oauth_headers["oauth_token"] = options[:token] unless options[:token].nil?
     end
@@ -38,15 +37,15 @@ module Twittr
       joined_params = parameter_string.sort.map { |values| "#{values[0]}=#{values[1]}" }.join("&")
       digest = OpenSSL::Digest.new('sha1')
       hmac = OpenSSL::HMAC.digest(digest, key, string_base(joined_params))
-      oauth_headers["oauth_signature"] = CGI.escape(Base64.encode64(hmac).strip)
+      oauth_headers["oauth_signature"] = escape(Base64.encode64(hmac).strip)
     end
 
     def string_base(joined_params)
-      string = "#{http_method}&#{CGI.escape(end_point)}&#{CGI.escape(joined_params)}"
+      string = "#{http_method}&#{escape(end_point)}&#{escape(joined_params)}"
     end
 
     def key
-      "#{CGI.escape(consumer_secret)}&#{token_secret}"
+      "#{escape(consumer_secret)}&#{token_secret}"
     end
 
 
@@ -78,6 +77,10 @@ module Twittr
 
     private
     
+    def escape(string)
+      CGI::escape(string)
+    end
+
     def token_secret
       @token_secret
     end
