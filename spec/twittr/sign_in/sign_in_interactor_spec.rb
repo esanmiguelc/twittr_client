@@ -46,7 +46,8 @@ describe "Sign in interactor" do
   end
 
   it "Parses the response" do
-    allow(Twittr::OAuthSignature).to receive(:new).with(callback: "http://#{host_address}/twitter_callback", end_point: end_point).and_return(oauth_signature)
+    allow(Twittr::OAuthSignature).to receive(:new).with(callback: "http://#{host_address}/twitter_callback", 
+                                                        end_point: end_point).and_return(oauth_signature)
     allow(Twittr::Requester).to receive(:new).with(oauth_signature).and_return(request_spy)
     interactor = Twittr::SignInInteractor.new(:host => host_address, :session => {})
     response_body = "Response body"
@@ -58,7 +59,8 @@ describe "Sign in interactor" do
   end
 
   it "Saves the response token" do
-    allow(Twittr::OAuthSignature).to receive(:new).with(callback: "http://#{host_address}/twitter_callback", end_point: end_point).and_return(oauth_signature)
+    allow(Twittr::OAuthSignature).to receive(:new).with(callback: "http://#{host_address}/twitter_callback", 
+                                                        end_point: end_point).and_return(oauth_signature)
     allow(Twittr::Requester).to receive(:new).with(oauth_signature).and_return(request_spy)
     session = {}
     interactor = Twittr::SignInInteractor.new(:host => host_address, :session => session) 
@@ -74,7 +76,8 @@ describe "Sign in interactor" do
 
 
   it "saves secret in session" do
-    allow(Twittr::OAuthSignature).to receive(:new).with(callback: "http://#{host_address}/twitter_callback", end_point: end_point).and_return(oauth_signature)
+    allow(Twittr::OAuthSignature).to receive(:new).with(callback: "http://#{host_address}/twitter_callback", 
+                                                        end_point: end_point).and_return(oauth_signature)
     allow(Twittr::Requester).to receive(:new).with(oauth_signature).and_return(request_spy)
     session = {}
     interactor = Twittr::SignInInteractor.new(:host => host_address, :session => session) 
@@ -89,7 +92,8 @@ describe "Sign in interactor" do
   end
 
   it "returns the success callback" do
-    allow(Twittr::OAuthSignature).to receive(:new).with(callback: "http://#{host_address}/twitter_callback", end_point: end_point).and_return(oauth_signature)
+    allow(Twittr::OAuthSignature).to receive(:new).with(callback: "http://#{host_address}/twitter_callback", 
+                                                        end_point: end_point).and_return(oauth_signature)
     allow(Twittr::Requester).to receive(:new).with(oauth_signature).and_return(request_spy)
     session = {}
     interactor = Twittr::SignInInteractor.new(:host => host_address, :session => session) 
@@ -100,9 +104,5 @@ describe "Sign in interactor" do
     allow(response_spy).to receive(:get_param).with("oauth_token_secret").and_return("user_secret")
     
     expect(interactor.execute(lambda { true })).to eq(true)
-  end
-
-  def app
-    
   end
 end
