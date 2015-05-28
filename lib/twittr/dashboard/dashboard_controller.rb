@@ -23,7 +23,7 @@ module Twittr
         secret: session['secret'],
         token: session['token']
       )
-     requester = Twittr::TimelineRequester.new(oauth_signature)
+     requester = Twittr::Requester.new(oauth_signature)
      requester.make_call
     end
   end

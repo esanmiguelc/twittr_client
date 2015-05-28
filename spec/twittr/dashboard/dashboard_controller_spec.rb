@@ -42,7 +42,7 @@ describe Twittr::DashboardController do
       mock_signature = double("MockSignature")
       mock_requester = double("MockRequester", :make_call => "123")
       allow(Twittr::OAuthSignature).to receive(:new).with(params).and_return(mock_signature)
-      allow(Twittr::TimelineRequester).to receive(:new).with(mock_signature).and_return(mock_requester)
+      allow(Twittr::Requester).to receive(:new).with(mock_signature).and_return(mock_requester)
       get "/home_timeline", {}, {'rack.session' => { "screen_name" => "esanmiguelc",
                                         "token" => "456",
                                         "secret" => "123"} }
@@ -61,7 +61,7 @@ describe Twittr::DashboardController do
       mock_requester = double("MockRequester", :make_call => "123")
       mock_signature = double("MockSignature")
       allow(Twittr::OAuthSignature).to receive(:new).with(params).and_return(mock_signature)
-      expect(Twittr::TimelineRequester).to receive(:new).with(mock_signature).and_return(mock_requester)
+      expect(Twittr::Requester).to receive(:new).with(mock_signature).and_return(mock_requester)
 
       get "/home_timeline", {}, {'rack.session' => { "screen_name" => "esanmiguelc",
                                         "token" => "456",
@@ -77,7 +77,7 @@ describe Twittr::DashboardController do
       }
       mock_requester = double("MockRequester", :make_call => "123")
       allow(Twittr::OAuthSignature).to receive(:new).with(params).and_return("signature")
-      expect(Twittr::TimelineRequester).to receive(:new).with("signature").and_return(mock_requester)
+      expect(Twittr::Requester).to receive(:new).with("signature").and_return(mock_requester)
 
       get "/home_timeline", {}, {'rack.session' => { "screen_name" => "esanmiguelc",
                                         "token" => "456",

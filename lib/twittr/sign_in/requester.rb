@@ -2,8 +2,6 @@ require 'cgi'
 module Twittr
   class Requester
 
-    attr_accessor :response_params
-
     def initialize(signature)
       @oauth_signature = signature 
     end
@@ -11,9 +9,7 @@ module Twittr
     def make_call
       oauth_signature.generate_signature
       request.add_field("Authorization", string_auth_values)
-      response = http_caller.request(request).tap do |response|
-        @response_params = split_response_params(response.body)
-      end
+      response = http_caller.request(request)
       response.body
     end
 
@@ -40,10 +36,6 @@ module Twittr
       "OAuth " << oauth_signature.oauth_headers.map { |k,v| "#{k}=#{v}" }.join(", ")
     end
 
-    def get_response_param(param)
-      response_params[param]
-    end
-
     def body=(params)
       request.body = params
     end
@@ -51,9 +43,5 @@ module Twittr
     private
 
     attr_reader :oauth_signature
-
-    def split_response_params(params)
-      params.split("&").map { |param| param.split("=") }.to_h
-    end
   end
 end
