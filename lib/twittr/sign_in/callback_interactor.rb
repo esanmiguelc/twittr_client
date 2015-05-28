@@ -19,7 +19,8 @@ module Twittr
       parser.parse
       session['token'] = parser.get_param("oauth_token")
       session['secret'] = parser.get_param("oauth_token_secret")
-      session['screen_name'] = parser.get_param("oauth_screen_name")
+      session['screen_name'] = parser.get_param("screen_name")
+      p session
       on_success.call 
     end
   end

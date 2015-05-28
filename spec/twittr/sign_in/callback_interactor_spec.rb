@@ -53,7 +53,7 @@ describe "Handling the callack from twitter" do
     allow(Twittr::ResponseParser).to receive(:new).with(response_body).and_return(response_spy)
     expect(response_spy).to receive(:get_param).with("oauth_token").and_return("user_token")
     expect(response_spy).to receive(:get_param).with("oauth_token_secret").and_return("user_secret")
-    expect(response_spy).to receive(:get_param).with("oauth_screen_name").and_return("user_screen_name")
+    expect(response_spy).to receive(:get_param).with("screen_name").and_return("user_screen_name")
     interactor.execute(lambda { true })
 
     expect(session['secret']).to eq("user_secret")
@@ -70,7 +70,7 @@ describe "Handling the callack from twitter" do
     allow(Twittr::ResponseParser).to receive(:new).with(response_body).and_return(response_spy)
     expect(response_spy).to receive(:get_param).with("oauth_token").and_return("user_token")
     expect(response_spy).to receive(:get_param).with("oauth_token_secret").and_return("user_secret")
-    expect(response_spy).to receive(:get_param).with("oauth_screen_name").and_return("user_screen_name")
+    expect(response_spy).to receive(:get_param).with("screen_name").and_return("user_screen_name")
     interactor.execute(lambda { true })
 
     expect(session['token']).to eq("user_token")
@@ -87,7 +87,7 @@ describe "Handling the callack from twitter" do
     allow(Twittr::ResponseParser).to receive(:new).with(response_body).and_return(response_spy)
     expect(response_spy).to receive(:get_param).with("oauth_token").and_return("user_token")
     expect(response_spy).to receive(:get_param).with("oauth_token_secret").and_return("user_secret")
-    expect(response_spy).to receive(:get_param).with("oauth_screen_name").and_return("user_screen_name")
+    expect(response_spy).to receive(:get_param).with("screen_name").and_return("user_screen_name")
     interactor.execute(lambda { true })
 
     expect(session['screen_name']).to eq("user_screen_name")
@@ -104,7 +104,7 @@ describe "Handling the callack from twitter" do
     allow(Twittr::ResponseParser).to receive(:new).with(response_body).and_return(response_spy)
     expect(response_spy).to receive(:get_param).with("oauth_token").and_return("user_token")
     expect(response_spy).to receive(:get_param).with("oauth_token_secret").and_return("user_secret")
-    expect(response_spy).to receive(:get_param).with("oauth_screen_name").and_return("user_screen_name")
+    expect(response_spy).to receive(:get_param).with("screen_name").and_return("user_screen_name")
     expect(interactor.execute(lambda { true })).to eq(true)
   end
 end

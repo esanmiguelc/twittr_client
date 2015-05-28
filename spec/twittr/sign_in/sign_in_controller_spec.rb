@@ -24,7 +24,9 @@ describe Twittr::SignInController do
 
  context "/twitter_login" do
    it "calls the interactor" do
-     allow(Twittr::SignInInteractor).to receive(:new)
+     interactor_spy = spy("Interactor")
+     allow(interactor_spy).to receive(:execute)
+     allow(Twittr::SignInInteractor).to receive(:new).and_return(interactor_spy)
      post "/twitter_login", {}, {"HTTP_HOST" => "www.example.org"}
      expect(Twittr::SignInInteractor).to have_received(:new).with({host: "www.example.org", session: session})
    end
@@ -46,7 +48,9 @@ describe Twittr::SignInController do
 
  context "/twitter_callback" do
    it "calls the interactor" do
-     allow(Twittr::CallbackInteractor).to receive(:new)
+     interactor_spy = spy("Interactor")
+     allow(interactor_spy).to receive(:execute)
+     allow(Twittr::CallbackInteractor).to receive(:new).and_return(interactor_spy)
      params = {}
      get "/twitter_callback", params
      expect(Twittr::CallbackInteractor).to have_received(:new).with({params: params, session: session})
