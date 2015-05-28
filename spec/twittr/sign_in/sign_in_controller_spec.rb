@@ -25,8 +25,10 @@ describe Twittr::SignInController do
 
   context '/twitter_login' do
     let (:request_spy) { spy('requester') }
+    let (:response_spy) {spy("ResponseParser")} 
     let (:callback) { 'some-url' }
     let (:end_point) { 'https://api.twitter.com/oauth/request_token' }
+    let (:parser)  { spy('parser') }
     let (:oauth_signature) { "oauth_signature" }
 
     before(:each) do
@@ -52,8 +54,12 @@ describe Twittr::SignInController do
     it "redirects with oauth token" do
       allow(Twittr::OAuthSignature).to receive(:new).and_return(oauth_signature)
       expect(Twittr::Requester).to receive(:new).with(oauth_signature).and_return(request_spy)
-      allow(request_spy).to receive(:get_response_param).with("oauth_token").and_return("user_token")
-      allow(request_spy).to receive(:get_response_param).with("oauth_token_secret").and_return("user_secret")
+      response_body = "response_body"
+      expect(request_spy).to receive(:make_call).and_return(response_body)
+      allow(Twittr::ResponseParser).to receive(:new).with(response_body).and_return(response_spy)
+      expect(response_spy).to receive(:parse)
+      expect(response_spy).to receive(:get_param).with("oauth_token").and_return("user_token")
+      expect(response_spy).to receive(:get_param).with("oauth_token_secret").and_return("user_secret")
 
       post "/twitter_login"
 
@@ -61,22 +67,31 @@ describe Twittr::SignInController do
       expect(last_response.location).to eq("https://api.twitter.com/oauth/authenticate?oauth_token=user_token")
     end
 
-    it "token is stored in session" do
+
+    it "response saves token in session" do
       allow(Twittr::OAuthSignature).to receive(:new).and_return(oauth_signature)
       expect(Twittr::Requester).to receive(:new).with(oauth_signature).and_return(request_spy)
-      allow(request_spy).to receive(:get_response_param).with("oauth_token").and_return("user_token")
-      allow(request_spy).to receive(:get_response_param).with("oauth_token_secret").and_return("user_secret")
-
+      response_body = "response_body"
+      expect(request_spy).to receive(:make_call).and_return(response_body)
+      allow(Twittr::ResponseParser).to receive(:new).with(response_body).and_return(response_spy)
+      expect(response_spy).to receive(:parse)
+      expect(response_spy).to receive(:get_param).with("oauth_token").and_return("user_token")
+      expect(response_spy).to receive(:get_param).with("oauth_token_secret").and_return("user_secret")
+      
       post "/twitter_login"
 
       expect(session['token']).to eq("user_token")
     end
 
-    it "secret is stored in session" do
+    it "response saves secret in session" do
       allow(Twittr::OAuthSignature).to receive(:new).and_return(oauth_signature)
       expect(Twittr::Requester).to receive(:new).with(oauth_signature).and_return(request_spy)
-      allow(request_spy).to receive(:get_response_param).with("oauth_token").and_return("user_token")
-      allow(request_spy).to receive(:get_response_param).with("oauth_token_secret").and_return("user_secret")
+      response_body = "response_body"
+      expect(request_spy).to receive(:make_call).and_return(response_body)
+      allow(Twittr::ResponseParser).to receive(:new).with(response_body).and_return(response_spy)
+      expect(response_spy).to receive(:parse)
+      expect(response_spy).to receive(:get_param).with("oauth_token").and_return("user_token")
+      expect(response_spy).to receive(:get_param).with("oauth_token_secret").and_return("user_secret")
       
       post "/twitter_login"
 

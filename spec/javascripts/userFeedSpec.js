@@ -15,7 +15,7 @@
     it("makes a call to the feed", function() {
       spyOn($, "ajax");
       this.userFeed.getFeed();
-      return expect($.ajax.calls.mostRecent().args[0]["url"]).toEqual("/feed");
+      return expect($.ajax.calls.mostRecent().args[0]["url"]).toEqual("/feed/home_timeline");
     });
     it("defines dataType to JSON", function() {
       spyOn($, "ajax");

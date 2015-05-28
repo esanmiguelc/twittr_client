@@ -17,9 +17,11 @@ module Twittr
         end_point: "https://api.twitter.com/oauth/request_token"
       )
        requester = Twittr::Requester.new(oauth_signature)
-       requester.make_call
-       session['token'] = requester.get_response_param("oauth_token")
-       session['secret'] = requester.get_response_param("oauth_token_secret")
+       response_body = requester.make_call
+       response = Twittr::ResponseParser.new(response_body)
+       response.parse
+       session['token'] = response.get_param("oauth_token")
+       session['secret'] = response.get_param("oauth_token_secret")
 
        redirect to "https://api.twitter.com/oauth/authenticate?oauth_token=#{session['token']}"
     end

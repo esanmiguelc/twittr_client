@@ -1,3 +1,4 @@
+Dir.glob('./lib/twittr/*.rb').each { |file| require file }
 Dir.glob('./lib/twittr/*/*.rb').each { |file| require file }
 require 'rspec'
 require 'rack/test'

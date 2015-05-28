@@ -11,9 +11,10 @@ module Twittr
     def make_call
       oauth_signature.generate_signature
       request.add_field("Authorization", string_auth_values)
-      http_caller.request(request).tap do |response|
+      response = http_caller.request(request).tap do |response|
         @response_params = split_response_params(response.body)
       end
+      response.body
     end
 
     def http_caller

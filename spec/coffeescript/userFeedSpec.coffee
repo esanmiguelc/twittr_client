@@ -17,7 +17,7 @@ describe "Getting the user feed", ->
 
     @userFeed.getFeed()
 
-    expect($.ajax.calls.mostRecent().args[0]["url"]).toEqual("/feed")
+    expect($.ajax.calls.mostRecent().args[0]["url"]).toEqual("/feed/home_timeline")
 
   it "defines dataType to JSON", ->
     spyOn($, "ajax")

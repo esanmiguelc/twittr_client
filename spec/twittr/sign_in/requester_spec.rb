@@ -20,14 +20,15 @@ describe Twittr::Requester do
     let(:post_object) { spy("http_post") }
     let(:http_caller) { spy("http_caller") }
 
-    it "makes a call to the API" do
+    it "returns the body of the response" do
+      ok_response = double("OkResponse", :body => "one=two")
       allow(Net::HTTP::Post).to receive(:new).with("example.org").and_return(post_object)
       allow(post_object).to receive(:add_field)
       allow(Net::HTTP).to receive(:new).and_return(http_caller)
+      allow(http_caller).to receive(:request).and_return(ok_response)
       requester = create_requester
-      requester.make_call
 
-      expect(oauth_signature).to have_received(:generate_signature)
+      expect(requester.make_call).to eq("one=two")
     end
 
     it "adds the string headers to the method caller" do
