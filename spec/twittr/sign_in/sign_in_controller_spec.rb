@@ -1,6 +1,5 @@
 require 'spec_helper'
 
-
 describe Twittr::SignInController do
 
   def app
@@ -31,11 +30,8 @@ describe Twittr::SignInController do
     let (:parser)  { spy('parser') }
     let (:oauth_signature) { "oauth_signature" }
 
-    before(:each) do
-      allow(Twittr::OAuthSignature).to receive(:new).with(callback: "http://#{callback}/twitter_callback", end_point: end_point).and_return(oauth_signature)
-    end
-
     it "builds a Twitter Oauth signature" do
+      allow(Twittr::OAuthSignature).to receive(:new).with(callback: "http://#{callback}/twitter_callback", end_point: end_point).and_return(oauth_signature)
       allow(Twittr::Requester).to receive(:new).with(oauth_signature).and_return(request_spy)
       post "/twitter_login", {}, {"HTTP_HOST" => callback}
 
