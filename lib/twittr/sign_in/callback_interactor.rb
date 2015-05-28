@@ -9,7 +9,7 @@ module Twittr
       @params = options[:params]
     end
 
-    def execute
+    def execute(on_success)
       oauth_signature = Twittr::OAuthSignature.new(end_point: END_POINT,
                                  token: session['token'])
       requester = Twittr::Requester.new(oauth_signature).tap do |request|
@@ -20,6 +20,7 @@ module Twittr
       session['token'] = parser.get_param("oauth_token")
       session['secret'] = parser.get_param("oauth_token_secret")
       session['screen_name'] = parser.get_param("oauth_screen_name")
+      on_success.call 
     end
   end
 end

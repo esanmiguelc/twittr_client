@@ -23,7 +23,7 @@ describe "Handling the callack from twitter" do
                                                          token: "456").and_return(oauth_signature)
     expect(Twittr::Requester).to receive(:new).with(oauth_signature).and_return(request_spy)
     interactor = Twittr::CallbackInteractor.new(session: session, params: params)
-    interactor.execute
+    interactor.execute(lambda { true })
   end
 
   it "sets the body for the request" do
@@ -31,7 +31,7 @@ describe "Handling the callack from twitter" do
     allow(Twittr::Requester).to receive(:new).with(oauth_signature).and_return(request_spy)
     expect(request_spy).to receive(:body=).with("oauth_verifier=123")
     interactor = Twittr::CallbackInteractor.new(params: params, session: session)
-    interactor.execute
+    interactor.execute(lambda { true })
   end
 
   it "makes a request to get access tokens" do
@@ -39,7 +39,7 @@ describe "Handling the callack from twitter" do
     expect(Twittr::Requester).to receive(:new).with(oauth_signature).and_return(request_spy)
     expect(request_spy).to receive(:make_call)
     interactor = Twittr::CallbackInteractor.new(session: session, params: params)
-    interactor.execute
+    interactor.execute(lambda { true })
   end
 
   it "saves the secret in session" do
@@ -54,7 +54,7 @@ describe "Handling the callack from twitter" do
     expect(response_spy).to receive(:get_param).with("oauth_token").and_return("user_token")
     expect(response_spy).to receive(:get_param).with("oauth_token_secret").and_return("user_secret")
     expect(response_spy).to receive(:get_param).with("oauth_screen_name").and_return("user_screen_name")
-    interactor.execute
+    interactor.execute(lambda { true })
 
     expect(session['secret']).to eq("user_secret")
   end
@@ -71,7 +71,7 @@ describe "Handling the callack from twitter" do
     expect(response_spy).to receive(:get_param).with("oauth_token").and_return("user_token")
     expect(response_spy).to receive(:get_param).with("oauth_token_secret").and_return("user_secret")
     expect(response_spy).to receive(:get_param).with("oauth_screen_name").and_return("user_screen_name")
-    interactor.execute
+    interactor.execute(lambda { true })
 
     expect(session['token']).to eq("user_token")
   end
@@ -88,8 +88,23 @@ describe "Handling the callack from twitter" do
     expect(response_spy).to receive(:get_param).with("oauth_token").and_return("user_token")
     expect(response_spy).to receive(:get_param).with("oauth_token_secret").and_return("user_secret")
     expect(response_spy).to receive(:get_param).with("oauth_screen_name").and_return("user_screen_name")
-    interactor.execute
+    interactor.execute(lambda { true })
 
     expect(session['screen_name']).to eq("user_screen_name")
+  end
+
+  it "returns the success callback" do
+    allow(Twittr::OAuthSignature).to receive(:new).and_return(oauth_signature)
+    allow(Twittr::Requester).to receive(:new).with(oauth_signature).and_return(request_spy)
+    session = {}
+    response_spy = spy("ResponseSpy")
+    interactor = Twittr::CallbackInteractor.new(session: session, params: params) 
+    response_body = "Response body"
+    allow(request_spy).to receive(:make_call).and_return(response_body)
+    allow(Twittr::ResponseParser).to receive(:new).with(response_body).and_return(response_spy)
+    expect(response_spy).to receive(:get_param).with("oauth_token").and_return("user_token")
+    expect(response_spy).to receive(:get_param).with("oauth_token_secret").and_return("user_secret")
+    expect(response_spy).to receive(:get_param).with("oauth_screen_name").and_return("user_screen_name")
+    expect(interactor.execute(lambda { true })).to eq(true)
   end
 end
