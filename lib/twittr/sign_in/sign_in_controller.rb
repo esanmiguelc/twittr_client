@@ -12,18 +12,8 @@ module Twittr
     end
 
     post '/twitter_login' do
-      oauth_signature = Twittr::OAuthSignature.new(
-        callback: "http://#{request.host_with_port}/twitter_callback", 
-        end_point: "https://api.twitter.com/oauth/request_token"
-      )
-       requester = Twittr::Requester.new(oauth_signature)
-       response_body = requester.make_call
-       response = Twittr::ResponseParser.new(response_body)
-       response.parse
-       session['token'] = response.get_param("oauth_token")
-       session['secret'] = response.get_param("oauth_token_secret")
-
-       redirect to "https://api.twitter.com/oauth/authenticate?oauth_token=#{session['token']}"
+     on_success = lambda {redirect to "https://api.twitter.com/oauth/authenticate?oauth_token=#{session['token']}"}
+     Twittr::SignInInteractor.new(host: request.host_with_port, session: session).execute(on_success)
     end
 
     get '/twitter_callback' do

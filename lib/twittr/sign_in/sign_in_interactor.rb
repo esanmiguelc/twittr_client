@@ -4,7 +4,7 @@ module Twittr
     END_POINT = "https://api.twitter.com/oauth/request_token"
 
     def initialize(options)
-      @request = options[:request]
+      @host = options[:host]
       @session = options[:session]
     end
 
@@ -23,7 +23,7 @@ module Twittr
     end
 
     def host
-      @request.host_with_port
+      @host
     end
 
     def session
