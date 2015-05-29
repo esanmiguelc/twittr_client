@@ -26,6 +26,29 @@ describe Twittr::OAuthSignature do
     end
   end
 
+  context "Request parameters" do
+
+    it "takes the string query parameters from the end-point" do
+      end_point = "https://www.example.org?some=parameter"
+      oauth_signature = create_request(end_point)
+      expect(oauth_signature.request_params).to eq({"some" => "parameter"})
+    end
+
+    it "takes multiple string query parameters from the end-point" do
+      end_point = "https://www.example.org?some=parameter&something=else"
+      oauth_signature = create_request(end_point)
+      expect(oauth_signature.request_params).to eq({"some" => "parameter",
+                                                    "something" => "else"})
+    end
+
+    it "has no params if nothing is passed in on the request" do
+
+      end_point = "https://www.example.org"
+      oauth_signature = create_request(end_point)
+      expect(oauth_signature.request_params).to eq({})
+    end
+  end
+
   context "generates a signature for authentication" do
     it "generates the correct string base" do
       end_point = "https://api.twitter.com/1/statuses/update.json"
@@ -45,6 +68,13 @@ describe Twittr::OAuthSignature do
       joined_params = parameter_string.sort.map { |values| "#{values[0]}=#{values[1]}" }.join("&")
       post_request = create_request(end_point)
       expect(post_request.string_base(joined_params)).to eq(string_base)
+    end
+
+    it "does not include the query parameters on string base" do
+      end_point = "https://api.twitter.com/1/statuses/update.json?query=parameter"
+      signature = create_request(end_point)
+      joined_params = "somestring"
+      expect(signature.string_base(joined_params)).not_to include("parameter")
     end
 
     def string_base
@@ -86,7 +116,7 @@ describe Twittr::OAuthSignature do
     end
   end
 
-  context "authentication header params" do
+  context "Authentication header params" do
     let (:signature_headers) { Twittr::OAuthSignature.new(end_point: "example.org") }
     it "has consumer_key" do
       expect(signature_headers.contains_auth_param?("oauth_consumer_key")).to eq(true)

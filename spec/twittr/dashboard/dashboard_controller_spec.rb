@@ -21,7 +21,25 @@ describe Twittr::DashboardController do
     end
   end
 
-  context "calls the api" do
+  context "calls the twitter api for the user information" do
+    it "calls the interactor" do
+      interactor_spy = spy("Interactor")
+      allow(interactor_spy).to receive(:execute)
+      allow(Twittr::GetUserInteractor).to receive(:new).and_return(interactor_spy)
+      get "/twitter_user"
+      expect(Twittr::GetUserInteractor).to have_received(:new).with({session: session})
+    end
+
+    it "calls execute" do
+      interactor_spy = spy("Interactor")
+      allow(Twittr::GetUserInteractor).to receive(:new).and_return(interactor_spy)
+      get "/twitter_user"
+      expect(Twittr::GetUserInteractor).to have_received(:new).with({session: session})    
+      expect(interactor_spy).to have_received(:execute)
+    end
+  end
+
+  context "calls the api for the feed" do
     let (:params) { 
       {
         end_point: "https://api.twitter.com/1.1/statuses/home_timeline.json",
@@ -85,5 +103,9 @@ describe Twittr::DashboardController do
 
       expect(mock_requester).to have_received(:make_call)
     end
+  end
+
+  def session
+    last_request.env['rack.session']
   end
 end

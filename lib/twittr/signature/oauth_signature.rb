@@ -41,7 +41,8 @@ module Twittr
     end
 
     def string_base(joined_params)
-      string = "#{http_method}&#{escape(end_point)}&#{escape(joined_params)}"
+      stripped_query_parameters = end_point.split("?").first
+      "#{http_method}&#{escape(stripped_query_parameters)}&#{escape(joined_params)}"
     end
 
     def key
@@ -50,7 +51,12 @@ module Twittr
 
 
     def request_params
-      {}
+      if (end_point.include?("?"))
+        parameters = URI(end_point).query.split("&").map { |argument| argument.split("=") }.flatten
+        Hash[*parameters]
+      else
+        @request_params
+      end
     end
 
     def get_param(key)

@@ -16,6 +16,11 @@ module Twittr
      end
     end
 
+    get "/twitter_user" do
+      on_success = lambda { |json| json }
+      Twittr::GetUserInteractor.new(session: session).execute(on_success)
+    end
+
     get "/home_timeline" do
       oauth_signature = Twittr::OAuthSignature.new(
         end_point: "https://api.twitter.com/1.1/statuses/home_timeline.json",
