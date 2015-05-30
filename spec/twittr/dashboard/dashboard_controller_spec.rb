@@ -8,16 +8,53 @@ describe Twittr::DashboardController do
   end
 
   context "the feed" do
-    it "gets the feed" do
+    xit "gets the page" do
       get "/", {}, {'rack.session' => { "screen_name" => "esanmiguelc" } }
-
+      interactor_spy = spy('Interactor')
+      allow(interactor_spy).to receive(:execute)
+      allow(Twittr::AuthorizationInteractor).to receive(:new).and_return(interactor_spy)
       expect(last_response).to be_ok
     end
 
-    it "redirects if there is no session" do
+    xit "redirects if there is no session" do
       get "/"
-
+      interactor_spy = spy('Interactor')
+      allow(Twittr::AuthorizationInteractor).to receive(:new).and_return(interactor_spy)
       expect(last_response.location).to eq("http://example.org/")
+    end
+
+    it "calls the interactor" do
+      interactor_spy = spy('Interactor')
+      allow(interactor_spy).to receive(:execute)
+      allow(Twittr::AuthorizationInteractor).to receive(:new).and_return(interactor_spy)
+      get "/"
+      expect(Twittr::AuthorizationInteractor).to have_received(:new).with(session: session)
+    end
+  end
+
+  context "sending the status update to the api" do
+    let(:interactor_spy) { spy("Interactor") }
+    let(:params) {{  "status" => "Hello World" }}
+
+    it "has a valid route" do
+      allow(interactor_spy).to receive(:execute)
+      allow(Twittr::UpdateStatusInteractor).to receive(:new).and_return(interactor_spy)
+      post "/update_status", params
+      expect(last_response).to be_ok
+    end
+
+    it "calls the interactor" do
+      allow(interactor_spy).to receive(:execute)
+      allow(Twittr::UpdateStatusInteractor).to receive(:new).and_return(interactor_spy)
+      post "/update_status", params
+      expect(Twittr::UpdateStatusInteractor).to have_received(:new).with(params: params, session: session)
+    end
+
+    it "calls execute" do
+      allow(Twittr::UpdateStatusInteractor).to receive(:new).and_return(interactor_spy)
+      post "/update_status", params
+      expect(Twittr::UpdateStatusInteractor).to have_received(:new).with(params: params, session: session)    
+      expect(interactor_spy).to have_received(:execute)
     end
   end
 

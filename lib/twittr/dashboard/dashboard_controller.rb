@@ -9,11 +9,14 @@ module Twittr
     end
 
     get "/" do
-     if session['screen_name'].nil?
-       redirect to "http://#{request.host_with_port}/"
-     else
-      erb :feed, :layout => false
-     end
+      on_success = lambda { redirect to "http://#{request.host_with_port}/"}
+      on_fail = lambda { erb :feed, :layout => false }
+      Twittr::AuthorizationInteractor.new(session: session).execute(on_success, on_fail)
+    end
+
+    post "/update_status" do
+      on_success = lambda { true }
+      Twittr::UpdateStatusInteractor.new(params: params, session: session).execute(on_success)
     end
 
     get "/twitter_user" do
