@@ -9,8 +9,8 @@ module Twittr
     end
 
     get "/" do
-      on_success = lambda { redirect to "http://#{request.host_with_port}/"}
-      on_fail = lambda { erb :feed, :layout => false }
+      on_fail = lambda { redirect to "http://#{request.host_with_port}/"}
+      on_success = lambda { erb :feed, :layout => false }
       Twittr::AuthorizationInteractor.new(session: session).execute(on_success, on_fail)
     end
 
