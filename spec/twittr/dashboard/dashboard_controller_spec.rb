@@ -8,15 +8,14 @@ describe Twittr::DashboardController do
   end
 
   context "the feed" do
-    xit "gets the page" do
+    it "gets the page" do
+      mock_interactor = MockInteractor.new
       get "/", {}, {'rack.session' => { "screen_name" => "esanmiguelc" } }
-      interactor_spy = spy('Interactor')
-      allow(interactor_spy).to receive(:execute)
-      allow(Twittr::AuthorizationInteractor).to receive(:new).and_return(interactor_spy)
+      allow(Twittr::AuthorizationInteractor).to receive(:new).and_return(mock_interactor)
       expect(last_response).to be_ok
     end
 
-    xit "redirects if there is no session" do
+    it "redirects if there is no session" do
       get "/"
       interactor_spy = spy('Interactor')
       allow(Twittr::AuthorizationInteractor).to receive(:new).and_return(interactor_spy)
