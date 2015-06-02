@@ -16,9 +16,11 @@ src_files:
   - /underscore-min.js
   - /backbone-min.js
   - /tweet.js
-  - /userFeed.js
+  - /tweetFeed.js
   - /dashboardView.js
   - /tweetParser.js
+  - /user.js
+  - /userParser.js
 
 # stylesheets
 #

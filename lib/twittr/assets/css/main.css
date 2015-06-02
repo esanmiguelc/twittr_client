@@ -28,6 +28,63 @@ body {
   color: white;
 }
 
+.update-status {
+  background-color:white;
+  text-align:center;
+  padding-top:20px;
+  padding-bottom:20px;
+  font-size:30px;
+  font-weight:100;
+}
+
+#tweet-button {
+  float:right;
+  right: 1.5%;
+  position:absolute;
+}
+
+#user-info {
+  width:100%;
+  background:white;
+  text-align:center;
+  padding-top:10px;
+  background:white;
+}
+
+#following {
+  width:50%;
+  display:inline-block;
+}
+
+#followers {
+  width:50%;
+  display:inline-block;
+  float:right;
+}
+
+.title {
+  padding-bottom:5px;
+  display:inline-block;
+  color:rgb(168,168,168);
+  border-bottom:1px solid rgb(232,229,229);
+  font-size:10px;
+  font-weight:800;
+}
+
+.amount {
+  color:rgb(168,168,168);
+  font-weight:800;
+  padding-top:5px;
+}
+
+textarea {
+  width:97%;
+  background-color: #f0f0f0;
+  padding:10px;
+  border:none;
+  border-radius:10px;
+}
+
 .loading {
   position:absolute;
   width: 200px;

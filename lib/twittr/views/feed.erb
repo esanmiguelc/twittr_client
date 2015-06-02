@@ -8,6 +8,31 @@
     <div class="dashboard-header">
       <h1 class="text-center logo">Twittr</h1>
     </div>
+    <div data-id="user" id="user-info">
+      <div id="following">
+        <div class="title">
+          FOLLOWING
+        </div>
+        <div class="amount">
+          512
+        </div>
+      </div>
+      <div id="followers">
+        <div class="title">
+          FOLLOWERS
+        </div>
+        <div class="amount">
+          314
+        </div>
+      </div>
+    </div>
+    <div class="update-status">
+      <form id="create-tweet">
+        <textarea name='status' maxlength="140" placeholder="Tweet.."></textarea>
+        <div class="clearfix"></div>
+        <a href="#" id="tweet-button">Tweet</a>
+      </form>
+    </div>
     <div class="container-fluid">
       <div class="row">
         <div data-id="app">
@@ -19,8 +44,10 @@
      <script src="javascripts/underscore-min.js"></script>
      <script src="javascripts/backbone-min.js"></script>
      <script src="javascripts/tweet.js"></script>
-     <script src="javascripts/userFeed.js"></script>
+     <script src="javascripts/tweetFeed.js"></script>
      <script src="javascripts/tweetParser.js"></script>
+     <script src="javascripts/user.js"></script>
+     <script src="javascripts/userParser.js"></script>
      <script src="javascripts/dashboardView.js"></script>
      <script src="javascripts/main.js"></script>
   </body>
