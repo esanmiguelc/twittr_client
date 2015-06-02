@@ -1,7 +1,7 @@
 describe "Getting the user feed", ->
   beforeEach ->
     jasmine.Ajax.install()
-    @userFeed = new TweetFeed
+    @userFeed = new TweetFeed("/feed/home_timeline")
 
   afterEach ->
     jasmine.Ajax.uninstall()

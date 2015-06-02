@@ -1,9 +1,11 @@
 class TweetFeed
 
+  constructor: (@url) ->
+
   getFeed: (callback) ->
     $.ajax
       type: 'GET'
-      url: '/feed/home_timeline'
+      url: @url
       beforeSend: @showSpinner
       complete: @hideSpinner
       success: callback

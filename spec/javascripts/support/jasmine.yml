@@ -21,6 +21,7 @@ src_files:
   - /tweetParser.js
   - /user.js
   - /userParser.js
+  - /userView.js
 
 # stylesheets
 #

@@ -2,7 +2,7 @@
   describe("Getting the user feed", function() {
     beforeEach(function() {
       jasmine.Ajax.install();
-      return this.userFeed = new TweetFeed;
+      return this.userFeed = new TweetFeed("/feed/home_timeline");
     });
     afterEach(function() {
       return jasmine.Ajax.uninstall();
